@@ -2,16 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TikTok Shop Creator Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
+        /* Strict Reset for Layout Stability */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden; /* Critical: prevents horizontal expansion */
             background-color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
             color: #000000;
+            -webkit-tap-highlight-color: transparent;
         }
+
         .text-secondary {
             color: #808080;
         }
@@ -117,528 +125,507 @@
             100% { transform: translateX(0) scale(0.6); z-index: 1; }
         }
 
+        /* Helper to lock body scroll without breaking layout */
+        body.scroll-locked {
+            overflow: hidden !important;
+        }
+
     </style>
 </head>
-<body class="antialiased relative min-h-screen bg-white overflow-x-hidden w-full max-w-full">
+<body>
 
-    <!-- GLOBAL LOADER (Fixed on top of everything) -->
-    <div id="global-loader" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
-        <div class="tiktok-loader">
+    <!-- GLOBAL LOADER (Fixed on top of everything, outside the wrapper) -->
+    <div id="global-loader" class="fixed inset-0 z-[100] flex items-center justify-center hidden pointer-events-none">
+        <!-- Slight backdrop to ensure focus on loader -->
+        <div class="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div> 
+        <div class="tiktok-loader relative z-10">
             <div class="tiktok-ball ball-cyan"></div>
             <div class="tiktok-ball ball-red"></div>
         </div>
     </div>
 
-    <!-- Screen 1: Main Creator Center -->
-    <div id="main-view" class="pb-20 w-full bg-white">
-        <div class="px-4 pt-4">
-            <!-- Header -->
-            <div class="mb-6">
-                <!-- Top Navigation Bar -->
-                <div class="flex items-center justify-between mb-4">
-                    <button class="p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                        </svg>
-                    </button>
-                    
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    <!-- APP WRAPPER: Ensures overflow is clipped so animations don't expand screen -->
+    <div id="app-wrapper" class="relative w-full min-h-screen overflow-x-hidden bg-white">
+
+        <!-- Screen 1: Main Creator Center -->
+        <div id="main-view" class="pb-20 w-full bg-white">
+            <div class="px-4 pt-4">
+                <!-- Header -->
+                <div class="mb-6">
+                    <!-- Top Navigation Bar -->
+                    <div class="flex items-center justify-between mb-4">
+                        <button class="p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
-                            <span class="accent-red text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 absolute -top-1 -right-1">99+</span>
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                </svg>
+                                <span class="accent-red text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 absolute -top-1 -right-1">99+</span>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </div>
+                    <!-- Title Row -->
+                    <h1 class="text-2xl font-black">TikTok Shop Creator Center</h1>
+                </div>
+
+                <!-- Today's data -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-black">Today's data</h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-secondary">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                         </svg>
                     </div>
+                    <div class="flex justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-secondary text-sm">Sales</span>
+                            <!-- Added ID for dynamic update -->
+                            <span id="dashboard-sales" class="font-black text-2xl mt-1">$0.00</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-secondary text-sm">Items sold</span>
+                            <!-- Added ID for dynamic update -->
+                            <span id="dashboard-items" class="font-black text-2xl mt-1">0</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-secondary text-sm">Orders</span>
+                            <!-- Added ID for dynamic update -->
+                            <span id="dashboard-orders" class="font-black text-2xl mt-1">0</span>
+                        </div>
+                    </div>
                 </div>
-                <!-- Title Row -->
-                <h1 class="text-2xl font-black">TikTok Shop Creator Center</h1>
+
+                <!-- What's big this month -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-black mb-4">What's big this month</h2>
+                    <!-- Banner Container -->
+                    <div class="relative w-full rounded-xl overflow-hidden shadow-sm mb-3">
+                        <img src="https://i.ibb.co/7Nj77tsk/Tik-Tok-af0340f22d.png" alt="TikTok Banner" class="w-full object-cover">
+                    </div>
+                    <!-- Pagination Dots -->
+                    <div class="flex justify-center space-x-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-black"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    </div>
+                </div>
+
+                <!-- TikTok Shop toolkit -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-black mb-4">TikTok Shop toolkit</h2>
+                    <div class="flex space-x-5 overflow-x-auto hide-scrollbar pb-2">
+                        <!-- Product Marketplace -->
+                        <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
+                            <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
+                                <img src="https://i.ibb.co/nNMn1Bxg/1.png" alt="Product Marketplace" class="w-12 h-12 object-contain">
+                            </div>
+                            <span class="mt-2 text-[11px] text-center font-bold leading-tight">Product Marketplace</span>
+                        </div>
+                        <!-- Manage showcase -->
+                        <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
+                            <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
+                                <img src="https://i.ibb.co/wN3y5Y29/2.png" alt="Manage showcase" class="w-12 h-12 object-contain">
+                            </div>
+                            <span class="mt-2 text-[11px] text-center font-bold leading-tight">Manage showcase</span>
+                        </div>
+                        
+                        <!-- Earnings (ACTIVE BUTTON) -->
+                        <button onclick="showEarningsView()" class="flex flex-col items-center flex-shrink-0 focus:outline-none transition-transform active:scale-95" style="width: 70px;">
+                            <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center border-2 border-transparent hover:border-gray-200">
+                                <img src="https://i.ibb.co/sJwSJJRS/3.png" alt="Earnings" class="w-12 h-12 object-contain">
+                            </div>
+                            <span class="mt-2 text-[11px] text-center font-bold leading-tight">Earnings</span>
+                        </button>
+                        
+                        <!-- Collab invites -->
+                        <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
+                            <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
+                                <img src="https://i.ibb.co/Q74z1YWh/4.png" alt="Collab invites" class="w-12 h-12 object-contain">
+                            </div>
+                            <span class="mt-2 text-[11px] text-center font-bold leading-tight">Collab invites</span>
+                        </div>
+                        <!-- Promote -->
+                        <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
+                            <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
+                                <img src="https://i.ibb.co/FbhBgRPj/5.png" alt="Promote" class="w-12 h-12 object-contain">
+                            </div>
+                            <span class="mt-2 text-[11px] text-center font-bold leading-tight">Promote</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your showcase -->
+                <div class="mb-24">
+                    <h2 class="text-lg font-black">Your showcase</h2>
+                </div>
             </div>
 
-            <!-- Today's data -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-black">Today's data</h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-secondary">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            <!-- Floating Action Button -->
+            <div class="fixed bottom-6 w-full flex justify-center z-10">
+                <button class="bg-white text-black font-medium flex items-center px-6 py-3 rounded-full shadow-lg border border-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M12 18.75a5.25 5.25 0 110-10.5 5.25 5.25 0 010 10.5z" />
                     </svg>
-                </div>
-                <div class="flex justify-between">
-                    <div class="flex flex-col">
-                        <span class="text-secondary text-sm">Sales</span>
-                        <!-- Added ID for dynamic update -->
-                        <span id="dashboard-sales" class="font-black text-2xl mt-1">$0.00</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-secondary text-sm">Items sold</span>
-                        <!-- Added ID for dynamic update -->
-                        <span id="dashboard-items" class="font-black text-2xl mt-1">0</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-secondary text-sm">Orders</span>
-                        <!-- Added ID for dynamic update -->
-                        <span id="dashboard-orders" class="font-black text-2xl mt-1">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- What's big this month -->
-            <div class="mb-8">
-                <h2 class="text-lg font-black mb-4">What's big this month</h2>
-                <!-- Banner Container -->
-                <div class="relative w-full rounded-xl overflow-hidden shadow-sm mb-3">
-                    <img src="https://i.ibb.co/7Nj77tsk/Tik-Tok-af0340f22d.png" alt="TikTok Banner" class="w-full object-cover">
-                </div>
-                <!-- Pagination Dots -->
-                <div class="flex justify-center space-x-1.5">
-                    <div class="w-1.5 h-1.5 rounded-full bg-black"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                </div>
-            </div>
-
-            <!-- TikTok Shop toolkit -->
-            <div class="mb-8">
-                <h2 class="text-lg font-black mb-4">TikTok Shop toolkit</h2>
-                <div class="flex space-x-5 overflow-x-auto hide-scrollbar pb-2">
-                    <!-- Product Marketplace -->
-                    <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
-                        <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
-                            <img src="https://i.ibb.co/nNMn1Bxg/1.png" alt="Product Marketplace" class="w-12 h-12 object-contain">
-                        </div>
-                        <span class="mt-2 text-[11px] text-center font-bold leading-tight">Product Marketplace</span>
-                    </div>
-                    <!-- Manage showcase -->
-                    <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
-                        <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
-                             <img src="https://i.ibb.co/wN3y5Y29/2.png" alt="Manage showcase" class="w-12 h-12 object-contain">
-                        </div>
-                        <span class="mt-2 text-[11px] text-center font-bold leading-tight">Manage showcase</span>
-                    </div>
-                    
-                    <!-- Earnings (ACTIVE BUTTON) -->
-                    <button onclick="showEarningsView()" class="flex flex-col items-center flex-shrink-0 focus:outline-none transition-transform active:scale-95" style="width: 70px;">
-                        <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center border-2 border-transparent hover:border-gray-200">
-                             <img src="https://i.ibb.co/sJwSJJRS/3.png" alt="Earnings" class="w-12 h-12 object-contain">
-                        </div>
-                        <span class="mt-2 text-[11px] text-center font-bold leading-tight">Earnings</span>
-                    </button>
-                    
-                    <!-- Collab invites -->
-                    <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
-                        <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
-                             <img src="https://i.ibb.co/Q74z1YWh/4.png" alt="Collab invites" class="w-12 h-12 object-contain">
-                        </div>
-                        <span class="mt-2 text-[11px] text-center font-bold leading-tight">Collab invites</span>
-                    </div>
-                    <!-- Promote -->
-                    <div class="flex flex-col items-center flex-shrink-0" style="width: 70px;">
-                        <div class="w-[60px] h-[60px] rounded-xl toolkit-item-bg flex items-center justify-center">
-                             <img src="https://i.ibb.co/FbhBgRPj/5.png" alt="Promote" class="w-12 h-12 object-contain">
-                        </div>
-                        <span class="mt-2 text-[11px] text-center font-bold leading-tight">Promote</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Your showcase -->
-            <div class="mb-24">
-                <h2 class="text-lg font-black">Your showcase</h2>
-            </div>
-        </div>
-
-        <!-- Floating Action Button -->
-        <div class="fixed bottom-6 w-full flex justify-center z-10">
-            <button class="bg-white text-black font-medium flex items-center px-6 py-3 rounded-full shadow-lg border border-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M12 18.75a5.25 5.25 0 110-10.5 5.25 5.25 0 010 10.5z" />
-                </svg>
-                Create video
-            </button>
-        </div>
-    </div>
-
-    <!-- Screen 2: Earnings Page (Hidden by default) -->
-    <!-- Added 'relative' class to parent for absolute positioning of loader -->
-    <div id="earnings-view" class="relative hidden min-h-screen bg-white flex flex-col w-full">
-        <!-- Header (Added ID and Initial opacity-0) -->
-        <div id="earnings-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
-            <button onclick="showMainView()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-            </button>
-            <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Earnings</h1>
-            <div class="w-6"></div> <!-- Spacer for optical centering -->
-        </div>
-
-        <!-- LOADER (Changed to absolute positioning to center perfectly on screen) -->
-        <div id="earnings-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
-            <div class="tiktok-loader">
-                <div class="tiktok-ball ball-cyan"></div>
-                <div class="tiktok-ball ball-red"></div>
-            </div>
-        </div>
-
-        <!-- CONTENT (Initially hidden opacity, fades in) -->
-        <div id="earnings-content" class="flex flex-col w-full opacity-0 transition-opacity duration-300">
-            <!-- Balance Section -->
-            <div class="flex flex-col items-center mt-6 mb-8">
-                <span class="text-slate-900 font-bold text-[13px] mb-1">Available balance</span>
-                <!-- Added ID for dynamic update -->
-                <span id="earnings-balance-display" class="text-4xl font-bold mb-5 text-slate-900">$0.00</span>
-                <!-- Withdraw Button with updated click handler -->
-                <button onclick="showWithdrawView(this)" class="bg-accent-red text-white font-medium text-[15px] py-2.5 rounded-md w-[140px] shadow-sm active:bg-red-600 transition-colors flex items-center justify-center">
-                    Withdraw
+                    Create video
                 </button>
             </div>
+        </div>
 
-            <!-- Menu List -->
-            <div class="px-5 flex-1">
-                <!-- Earning history -->
-                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                    <div class="flex items-center space-x-3.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-[15px] font-medium text-slate-900">Earning history</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        <!-- Screen 2: Earnings Page (Hidden by default) -->
+        <div id="earnings-view" class="relative hidden min-h-screen bg-white flex flex-col w-full">
+            <!-- Header -->
+            <div id="earnings-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
+                <button onclick="showMainView()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
-                </div>
+                </button>
+                <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Earnings</h1>
+                <div class="w-6"></div> <!-- Spacer for optical centering -->
+            </div>
 
-                <!-- Affiliate orders -->
-                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                    <div class="flex items-center space-x-3.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM12 9v6m3-3H9" />
-                        </svg>
-                        <span class="text-[15px] font-medium text-slate-900">Affiliate orders</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </div>
-
-                <!-- Affiliate commission rules -->
-                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                    <div class="flex items-center space-x-3.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                        </svg>
-                        <span class="text-[15px] font-medium text-slate-900">Affiliate commission rules</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </div>
-
-                <!-- Tax information -->
-                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                    <div class="flex items-center space-x-3.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                        <span class="text-[15px] font-medium text-slate-900">Tax information</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
+            <!-- LOADER -->
+            <div id="earnings-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
+                <div class="tiktok-loader">
+                    <div class="tiktok-ball ball-cyan"></div>
+                    <div class="tiktok-ball ball-red"></div>
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="pb-8 text-center px-6">
-                <p class="text-[10px] text-[#9CA3AF] leading-tight">The commission payout is powered by PayPal/Hyperwallet</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Screen 3: Withdraw Money Page (Hidden by default) -->
-    <!-- Updated with relative position, header/content IDs and loader -->
-    <div id="withdraw-view" class="relative hidden min-h-screen bg-white flex flex-col">
-        <!-- Header -->
-        <div id="withdraw-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
-            <button onclick="showEarningsViewFromWithdraw()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-            </button>
-            <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Withdraw money</h1>
-            <button class="p-2 -mr-2 text-gray-800">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- LOADER (Absolute centered) -->
-        <div id="withdraw-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
-            <div class="tiktok-loader">
-                <div class="tiktok-ball ball-cyan"></div>
-                <div class="tiktok-ball ball-red"></div>
-            </div>
-        </div>
-
-        <!-- Scrollable Content -->
-        <div id="withdraw-content" class="flex-1 px-4 pt-2 opacity-0 transition-opacity duration-300">
-            
-            <!-- Withdrawal Account Section -->
-            <div class="mb-8">
-                <div class="flex justify-between items-center mb-5">
-                    <h2 class="font-bold text-[16px]">Withdrawal account</h2>
-                    <button class="text-[13px] font-medium flex items-center text-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Add
+            <!-- CONTENT -->
+            <div id="earnings-content" class="flex flex-col w-full opacity-0 transition-opacity duration-300">
+                <!-- Balance Section -->
+                <div class="flex flex-col items-center mt-6 mb-8">
+                    <span class="text-slate-900 font-bold text-[13px] mb-1">Available balance</span>
+                    <span id="earnings-balance-display" class="text-4xl font-bold mb-5 text-slate-900">$0.00</span>
+                    <button onclick="showWithdrawView(this)" class="bg-accent-red text-white font-medium text-[15px] py-2.5 rounded-md w-[140px] shadow-sm active:bg-red-600 transition-colors flex items-center justify-center">
+                        Withdraw
                     </button>
                 </div>
-                
-                <div class="flex items-start">
-                    <!-- Bank Icon (Replaced with Image) -->
-                    <div class="mr-3 flex-shrink-0 mt-[2px]">
-                         <img src="https://i.ibb.co/TxXHj91f/bank.png" alt="Bank Icon" class="w-5 h-5 object-contain">
+
+                <!-- Menu List -->
+                <div class="px-5 flex-1">
+                    <!-- Earning history -->
+                    <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                        <div class="flex items-center space-x-3.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="text-[15px] font-medium text-slate-900">Earning history</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
                     </div>
 
-                    <!-- Details -->
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="font-bold text-slate-900 text-[15px] leading-tight">Bank transfer (********1237)</h3>
-                            <div class="flex items-center space-x-1 ml-2">
-                                <span class="bg-[#FE2C55]/10 text-[#FE2C55] text-[10px] font-bold px-1.5 py-0.5 rounded">Primary</span>
-                                <span class="bg-gray-100 text-gray-500 text-[10px] font-medium px-1.5 py-0.5 rounded">USD</span>
-                            </div>
+                    <!-- Affiliate orders -->
+                    <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                        <div class="flex items-center space-x-3.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM12 9v6m3-3H9" />
+                            </svg>
+                            <span class="text-[15px] font-medium text-slate-900">Affiliate orders</span>
                         </div>
-                        <div class="space-y-[2px]">
-                            <p class="text-[11px] text-[#9CA3AF]">Minimum withdrawal amount: $ 2.00</p>
-                            <p class="text-[11px] text-[#9CA3AF]">Maximum withdrawal amount: no limit</p>
-                            <p class="text-[11px] text-[#9CA3AF]">Funds should arrive in 5 - 7 business days</p>
-                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
                     </div>
-                </div>
-            </div>
 
-            <!-- Amount Input Section -->
-            <div class="mb-6">
-                <h2 class="font-bold text-[16px] mb-4">Amount</h2>
-                <div class="flex items-center border-b border-gray-100 pb-2 mb-2">
-                    <span id="currency-symbol" class="text-2xl text-gray-400 mr-1">$</span>
-                    <input id="withdraw-input" type="text" inputmode="decimal" placeholder="0.00" class="text-4xl font-normal w-full outline-none border-none placeholder-gray-400 p-0 m-0 text-slate-900" oninput="updateWithdrawState()" />
-                </div>
-                <div class="flex justify-between items-center mb-4">
-                    <!-- Added ID for dynamic update -->
-                    <p id="withdraw-balance-text" class="text-[#9CA3AF] text-[12px]">Available balance: $0.00</p>
-                    <button onclick="fillWithdrawAll()" class="text-accent-red font-bold text-[14px]">Withdraw all</button>
-                </div>
-                
-                <!-- Fee Breakdown Section (Hidden by default) -->
-                <div id="fee-breakdown" class="hidden space-y-2 mt-2">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[#808080] text-[13px]">Estimated receiving amount</span>
-                        <span id="estimated-amount" class="text-black font-bold text-[13px]">$0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center">
-                            <span class="text-[#808080] text-[13px] mr-1">Service fee</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3 text-[#808080]">
+                    <!-- Affiliate commission rules -->
+                    <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                        <div class="flex items-center space-x-3.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                             </svg>
+                            <span class="text-[15px] font-medium text-slate-900">Affiliate commission rules</span>
                         </div>
-                        <span class="text-black font-bold text-[13px]">$0.05</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </div>
+
+                    <!-- Tax information -->
+                    <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                        <div class="flex items-center space-x-3.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                            <span class="text-[15px] font-medium text-slate-900">Tax information</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
                     </div>
                 </div>
-            </div>
 
-            <!-- Main Withdraw Button (Changed to Gray) -->
-             <button id="withdraw-btn" onclick="showConfirmView(this)" class="w-full bg-gray-200 text-gray-400 font-bold py-3 rounded text-[16px] transition-colors duration-200" disabled>
-                Withdraw now
-            </button>
-        </div>
-    </div>
-
-    <!-- Screen 4: Confirm Withdrawal Page (Hidden by default) -->
-    <!-- Added 'relative' for loader positioning -->
-    <div id="confirm-view" class="relative hidden min-h-screen bg-white flex flex-col">
-        <!-- Header -->
-        <div id="confirm-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
-            <button onclick="showWithdrawViewFromConfirm()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-            </button>
-            <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Confirm withdrawal</h1>
-            <div class="w-6"></div> <!-- Spacer for optical centering -->
-        </div>
-
-        <!-- Content (Wrapped in ID for fade-in) -->
-        <div id="confirm-content" class="px-4 pt-4 pb-10 opacity-0 transition-opacity duration-300">
-            <!-- Transaction Details List -->
-            <div class="flex flex-col gap-6">
-                <!-- Item 1: Transfer to -->
-                <div>
-                    <!-- Reverted label color to gray -->
-                    <p class="text-sm text-gray-500 mb-1">Transfer to</p>
-                    <p class="text-sm text-slate-900 leading-tight">Bank transfer<br>(********1237)</p>
-                </div>
-                
-                <!-- Item 2: Withdrawal amount -->
-                <div>
-                    <!-- Reverted label color to gray -->
-                    <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
-                    <!-- Added ID for dynamic update -->
-                    <p id="confirm-withdrawal-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
-                </div>
-
-                <!-- Item 3: Service fee -->
-                <div>
-                    <!-- Reverted label color to gray -->
-                    <p class="text-sm text-gray-500 mb-1">Service fee</p>
-                    <p class="text-base text-gray-900 font-bold">$0.05</p>
-                </div>
-
-                <!-- Item 4: Receiving amount -->
-                <div>
-                    <!-- Reverted label color to gray -->
-                    <p class="text-sm text-gray-500 mb-1">Receiving amount</p>
-                    <!-- Added ID for dynamic update -->
-                    <p id="confirm-receiving-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
+                <!-- Footer -->
+                <div class="pb-8 text-center px-6">
+                    <p class="text-[10px] text-[#9CA3AF] leading-tight">The commission payout is powered by PayPal/Hyperwallet</p>
                 </div>
             </div>
-
-            <!-- Disclaimer -->
-            <p class="text-xs text-gray-400 mt-8 mb-8 leading-normal">
-                Entering incorrect information will result in declined transactions, and you will be responsible for any costs associated with processing your request.
-            </p>
-
-            <!-- Footer Action Button (Updated to trigger Success View) -->
-            <button onclick="showSuccessView(this)" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors">
-                Confirm to withdraw
-            </button>
         </div>
-    </div>
 
-    <!-- Screen 5: Success View (Hidden by default) -->
-    <!-- Added 'relative' class -->
-    <div id="success-view" class="relative hidden min-h-screen bg-white flex flex-col">
-        <!-- Content Wrapped in ID for fade-in animation -->
-        <div id="success-content" class="flex-1 flex flex-col px-4 pt-16 opacity-0 transition-opacity duration-300">
-            
-            <!-- Hero Section -->
-            <div class="flex flex-col items-center mb-10">
-                <!-- Changed icon style: Gray circle background, simple green checkmark inside -->
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-8 h-8 text-green-500">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        <!-- Screen 3: Withdraw Money Page (Hidden by default) -->
+        <div id="withdraw-view" class="relative hidden min-h-screen bg-white flex flex-col">
+            <!-- Header -->
+            <div id="withdraw-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
+                <button onclick="showEarningsViewFromWithdraw()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
-                </div>
-                <h1 class="text-xl font-bold text-slate-900 mb-2">Withdrawal in progress</h1>
-                <p class="text-xs text-gray-500">Funds should arrive in 5 - 7 business days</p>
+                </button>
+                <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Withdraw money</h1>
+                <button class="p-2 -mr-2 text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Transaction Details -->
-            <div class="flex flex-col gap-6 px-2">
-                <!-- Amount -->
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
-                    <!-- Added ID for dynamic update -->
-                    <p id="success-withdrawal-amount" class="text-[17px] font-bold text-slate-900">$0.00</p>
+            <!-- LOADER -->
+            <div id="withdraw-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
+                <div class="tiktok-loader">
+                    <div class="tiktok-ball ball-cyan"></div>
+                    <div class="tiktok-ball ball-red"></div>
                 </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div id="withdraw-content" class="flex-1 px-4 pt-2 opacity-0 transition-opacity duration-300">
                 
-                <!-- Fee -->
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Service fee</p>
-                    <!-- Made font bold -->
-                    <p class="text-[15px] font-bold text-slate-900">$0.05</p>
+                <!-- Withdrawal Account Section -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="font-bold text-[16px]">Withdrawal account</h2>
+                        <button class="text-[13px] font-medium flex items-center text-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <!-- Bank Icon -->
+                        <div class="mr-3 flex-shrink-0 mt-[2px]">
+                             <img src="https://i.ibb.co/TxXHj91f/bank.png" alt="Bank Icon" class="w-5 h-5 object-contain">
+                        </div>
+
+                        <!-- Details -->
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-slate-900 text-[15px] leading-tight">Bank transfer (********1237)</h3>
+                                <div class="flex items-center space-x-1 ml-2">
+                                    <span class="bg-[#FE2C55]/10 text-[#FE2C55] text-[10px] font-bold px-1.5 py-0.5 rounded">Primary</span>
+                                    <span class="bg-gray-100 text-gray-500 text-[10px] font-medium px-1.5 py-0.5 rounded">USD</span>
+                                </div>
+                            </div>
+                            <div class="space-y-[2px]">
+                                <p class="text-[11px] text-[#9CA3AF]">Minimum withdrawal amount: $ 2.00</p>
+                                <p class="text-[11px] text-[#9CA3AF]">Maximum withdrawal amount: no limit</p>
+                                <p class="text-[11px] text-[#9CA3AF]">Funds should arrive in 5 - 7 business days</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Transfer to -->
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Transfer to</p>
-                    <p class="text-[15px] text-slate-900 leading-tight">Bank transfer<br>(********1237)</p>
+                <!-- Amount Input Section -->
+                <div class="mb-6">
+                    <h2 class="font-bold text-[16px] mb-4">Amount</h2>
+                    <div class="flex items-center border-b border-gray-100 pb-2 mb-2">
+                        <span id="currency-symbol" class="text-2xl text-gray-400 mr-1">$</span>
+                        <input id="withdraw-input" type="text" inputmode="decimal" placeholder="0.00" class="text-4xl font-normal w-full outline-none border-none placeholder-gray-400 p-0 m-0 text-slate-900" oninput="updateWithdrawState()" />
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <p id="withdraw-balance-text" class="text-[#9CA3AF] text-[12px]">Available balance: $0.00</p>
+                        <button onclick="fillWithdrawAll()" class="text-accent-red font-bold text-[14px]">Withdraw all</button>
+                    </div>
+                    
+                    <!-- Fee Breakdown Section -->
+                    <div id="fee-breakdown" class="hidden space-y-2 mt-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[#808080] text-[13px]">Estimated receiving amount</span>
+                            <span id="estimated-amount" class="text-black font-bold text-[13px]">$0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="text-[#808080] text-[13px] mr-1">Service fee</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3 text-[#808080]">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                </svg>
+                            </div>
+                            <span class="text-black font-bold text-[13px]">$0.05</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Order ID -->
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Order ID</p>
-                    <p class="text-[15px] text-slate-900">7485861147717699374</p>
-                </div>
-
-                <!-- Button moved here (under Order ID) -->
-                <button onclick="showEarningsViewFromSuccess()" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors mt-2">
-                    Back
+                <!-- Main Withdraw Button -->
+                 <button id="withdraw-btn" onclick="showConfirmView(this)" class="w-full bg-gray-200 text-gray-400 font-bold py-3 rounded text-[16px] transition-colors duration-200" disabled>
+                    Withdraw now
                 </button>
             </div>
         </div>
-        
-        <!-- Footer Button container removed -->
-    </div>
+
+        <!-- Screen 4: Confirm Withdrawal Page (Hidden by default) -->
+        <div id="confirm-view" class="relative hidden min-h-screen bg-white flex flex-col">
+            <!-- Header -->
+            <div id="confirm-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
+                <button onclick="showWithdrawViewFromConfirm()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+                <h1 class="text-[17px] font-bold absolute left-1/2 transform -translate-x-1/2">Confirm withdrawal</h1>
+                <div class="w-6"></div> <!-- Spacer for optical centering -->
+            </div>
+
+            <!-- Content -->
+            <div id="confirm-content" class="px-4 pt-4 pb-10 opacity-0 transition-opacity duration-300">
+                <!-- Transaction Details List -->
+                <div class="flex flex-col gap-6">
+                    <!-- Item 1: Transfer to -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Transfer to</p>
+                        <p class="text-sm text-slate-900 leading-tight">Bank transfer<br>(********1237)</p>
+                    </div>
+                    
+                    <!-- Item 2: Withdrawal amount -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
+                        <p id="confirm-withdrawal-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
+                    </div>
+
+                    <!-- Item 3: Service fee -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Service fee</p>
+                        <p class="text-base text-gray-900 font-bold">$0.05</p>
+                    </div>
+
+                    <!-- Item 4: Receiving amount -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Receiving amount</p>
+                        <p id="confirm-receiving-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <p class="text-xs text-gray-400 mt-8 mb-8 leading-normal">
+                    Entering incorrect information will result in declined transactions, and you will be responsible for any costs associated with processing your request.
+                </p>
+
+                <!-- Footer Action Button -->
+                <button onclick="showSuccessView(this)" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors">
+                    Confirm to withdraw
+                </button>
+            </div>
+        </div>
+
+        <!-- Screen 5: Success View (Hidden by default) -->
+        <div id="success-view" class="relative hidden min-h-screen bg-white flex flex-col">
+            <!-- Content -->
+            <div id="success-content" class="flex-1 flex flex-col px-4 pt-16 opacity-0 transition-opacity duration-300">
+                
+                <!-- Hero Section -->
+                <div class="flex flex-col items-center mb-10">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-8 h-8 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-slate-900 mb-2">Withdrawal in progress</h1>
+                    <p class="text-xs text-gray-500">Funds should arrive in 5 - 7 business days</p>
+                </div>
+
+                <!-- Transaction Details -->
+                <div class="flex flex-col gap-6 px-2">
+                    <!-- Amount -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
+                        <p id="success-withdrawal-amount" class="text-[17px] font-bold text-slate-900">$0.00</p>
+                    </div>
+                    
+                    <!-- Fee -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Service fee</p>
+                        <p class="text-[15px] font-bold text-slate-900">$0.05</p>
+                    </div>
+
+                    <!-- Transfer to -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Transfer to</p>
+                        <p class="text-[15px] text-slate-900 leading-tight">Bank transfer<br>(********1237)</p>
+                    </div>
+
+                    <!-- Order ID -->
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Order ID</p>
+                        <p class="text-[15px] text-slate-900">7485861147717699374</p>
+                    </div>
+
+                    <!-- Button -->
+                    <button onclick="showEarningsViewFromSuccess()" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors mt-2">
+                        Back
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of #app-wrapper -->
 
     <script>
-        // Init global variables (removed fixed value)
+        // Init global variables
         let availableBalance = 0;
         const serviceFee = 0.05;
 
         // Generator Function
         function generateRandomBalance() {
-            // Range 1500 - 6000
             const min = 1500;
             const max = 6000;
             const random = Math.random() * (max - min) + min;
             return parseFloat(random.toFixed(2));
         }
 
-        // Init App Function - runs on load
+        // Init App Function
         function initApp() {
-            // 1. Generate Main Balance
             availableBalance = generateRandomBalance();
             
-            // 2. Update Earnings Screen Display
             const earningsBalanceEl = document.getElementById('earnings-balance-display');
             if (earningsBalanceEl) {
                  earningsBalanceEl.innerText = '$' + availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
 
-            // 3. Update Withdraw Screen Small Text
             const withdrawBalanceTextEl = document.getElementById('withdraw-balance-text');
             if (withdrawBalanceTextEl) {
                 withdrawBalanceTextEl.innerText = 'Available balance: $' + availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
 
-            // 4. Generate & Update Dashboard Data (Sales, Items, Orders)
             updateDashboardData(availableBalance);
         }
 
         function updateDashboardData(balance) {
-            // Algorithm:
-            // Sales = ~8% of total balance
             const salesRaw = balance * 0.08;
             const salesValue = parseFloat(salesRaw.toFixed(2));
 
-            // Items sold = Sales / ~15.5 (based on user logic: 300/19 ~= 15.7)
-            // Round to nearest integer
             let itemsValue = Math.round(salesValue / 15.5);
             if (itemsValue < 0) itemsValue = 0;
 
-            // Orders = Items - (1 or 2)
-            // Ensure orders is not less than 0 and not more than items
-            const subtract = Math.floor(Math.random() * 2) + 1; // 1 or 2
+            const subtract = Math.floor(Math.random() * 2) + 1; 
             let ordersValue = itemsValue - subtract;
             
-            // Safety checks
             if (ordersValue < 0) ordersValue = 0;
             if (itemsValue === 0) ordersValue = 0; 
-            // If we have items but orders became 0 or negative due to subtraction logic (rare on high numbers but possible on low), fix it.
-            // Actually, if items > 0, orders should be at least 1 usually.
             if (itemsValue > 0 && ordersValue <= 0) ordersValue = 1;
 
-            // Update DOM
             const salesEl = document.getElementById('dashboard-sales');
             const itemsEl = document.getElementById('dashboard-items');
             const ordersEl = document.getElementById('dashboard-orders');
@@ -648,57 +635,49 @@
             if (ordersEl) ordersEl.innerText = ordersValue;
         }
 
-        // Run initialization
         window.onload = initApp;
 
-        // ANIMATION: Logic for Transition and Loading
+        // HELPER: Lock Body Scroll
+        function lockScroll() {
+            document.body.classList.add('scroll-locked');
+        }
+        function unlockScroll() {
+            document.body.classList.remove('scroll-locked');
+        }
+
+        // ANIMATION LOGIC
         function showEarningsView() {
-            document.body.classList.add('overflow-hidden'); // Lock scroll
+            lockScroll();
 
             const mainView = document.getElementById('main-view');
             const earningsView = document.getElementById('earnings-view');
-            const header = document.getElementById('earnings-header'); // New ID
+            const header = document.getElementById('earnings-header');
             const loader = document.getElementById('earnings-loader');
             const content = document.getElementById('earnings-content');
 
-            // 1. Hide main view, show Earnings view
             mainView.classList.add('hidden');
             earningsView.classList.remove('hidden');
             window.scrollTo(0, 0);
 
-            // 2. Add slide-in animation
             earningsView.classList.remove('slide-in-right');
-            void earningsView.offsetWidth; // Trigger reflow
+            void earningsView.offsetWidth; 
             earningsView.classList.add('slide-in-right');
 
-            // 3. Initial State for Animation
-            // Hide Header and Content, Show Loader
             header.classList.add('opacity-0');
             header.classList.remove('fade-in');
-            
             content.classList.add('opacity-0');
             content.classList.remove('fade-in');
-            
             loader.classList.remove('hidden');
 
-            // 4. Sequence
-            // Total load time: 800ms
-            
             setTimeout(() => {
-                // Step A: Hide Loader
                 loader.classList.add('hidden');
-                
-                // Step B: Show Header
                 header.classList.remove('opacity-0');
                 header.classList.add('fade-in');
-                
-                // Step C: Show Content slightly later (e.g. +200ms)
                 setTimeout(() => {
                     content.classList.remove('opacity-0');
                     content.classList.add('fade-in');
-                    document.body.classList.remove('overflow-hidden'); // Unlock scroll
+                    unlockScroll();
                 }, 200); 
-                
             }, 800);
         }
 
@@ -708,22 +687,17 @@
             window.scrollTo(0, 0);
         }
 
-        // Updated showWithdrawView to accept button element and handle animations
         function showWithdrawView(buttonElement) {
-            document.body.classList.add('overflow-hidden'); // Lock scroll
+            lockScroll();
 
-            // 1. Button Feedback
-            const originalText = buttonElement.innerHTML; // "Withdraw"
-            // Replace text with spinner
+            const originalText = buttonElement.innerHTML;
             buttonElement.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             buttonElement.disabled = true;
 
             setTimeout(() => {
-                // Restore button
                 buttonElement.innerHTML = originalText;
                 buttonElement.disabled = false;
 
-                // 2. Perform Transition (similar to showEarningsView)
                 const earningsView = document.getElementById('earnings-view');
                 const withdrawView = document.getElementById('withdraw-view');
                 const header = document.getElementById('withdraw-header');
@@ -734,12 +708,10 @@
                 withdrawView.classList.remove('hidden');
                 window.scrollTo(0, 0);
 
-                // Animation classes for Slide In
                 withdrawView.classList.remove('slide-in-right');
-                void withdrawView.offsetWidth; // Trigger reflow
+                void withdrawView.offsetWidth; 
                 withdrawView.classList.add('slide-in-right');
 
-                // Initial State: Show Loader, Hide Header & Content
                 header.classList.add('opacity-0');
                 header.classList.remove('fade-in');
                 content.classList.add('opacity-0');
@@ -748,32 +720,23 @@
 
                 resetWithdrawForm();
 
-                // Sequence
                 setTimeout(() => {
-                    // Step A: Hide Loader
                     loader.classList.add('hidden');
-                    
-                    // Step B: Show Header
                     header.classList.remove('opacity-0');
                     header.classList.add('fade-in');
-                    
-                    // Step C: Show Content slightly later
                     setTimeout(() => {
                        content.classList.remove('opacity-0');
                        content.classList.add('fade-in');
-                       document.body.classList.remove('overflow-hidden'); // Unlock scroll
+                       unlockScroll();
                     }, 200);
-                    
-                }, 1000); // 1.0s delay for loader to spin
-
-            }, 500); // 500ms delay for button feedback
+                }, 1000); 
+            }, 500);
         }
 
         function showEarningsViewFromWithdraw() {
             document.getElementById('withdraw-view').classList.add('hidden');
             document.getElementById('earnings-view').classList.remove('hidden');
             
-            // Ensure content AND header are visible if returning directly
             document.getElementById('earnings-loader').classList.add('hidden');
             document.getElementById('earnings-header').classList.remove('opacity-0');
             document.getElementById('earnings-content').classList.remove('opacity-0');
@@ -781,27 +744,17 @@
             window.scrollTo(0, 0);
         }
 
-        // Updated showConfirmView to include GLOBAL loading animation
         function showConfirmView(buttonElement) {
-            document.body.classList.add('overflow-hidden'); // Lock scroll
+            lockScroll();
 
-            // 1. Button Feedback: Just disable and turn gray
-            // Remove Active Classes
             buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
-            // Add Inactive Classes
             buttonElement.classList.add('bg-gray-200', 'text-gray-400');
             buttonElement.disabled = true;
 
-            // Show Global Loader (immediately)
             const globalLoader = document.getElementById('global-loader');
             globalLoader.classList.remove('hidden');
 
-            // 2. Delay 600ms before swiping
             setTimeout(() => {
-                // Restore button visual state (in case user goes back later)
-                // buttonElement.disabled = false; (We do this on return)
-
-                // Update Data on Confirm Screen based on actual input
                 const inputValRaw = document.getElementById('withdraw-input').value.replace(/,/g, '');
                 const inputVal = parseFloat(inputValRaw) || 0;
                 const receivingVal = Math.max(0, inputVal - serviceFee);
@@ -809,8 +762,6 @@
                 document.getElementById('confirm-withdrawal-amount').innerText = '$' + inputVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('confirm-receiving-amount').innerText = '$' + receivingVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-
-                // Perform Transition
                 const withdrawView = document.getElementById('withdraw-view');
                 const confirmView = document.getElementById('confirm-view');
                 const header = document.getElementById('confirm-header');
@@ -820,58 +771,44 @@
                 confirmView.classList.remove('hidden');
                 window.scrollTo(0, 0);
 
-                // Animation classes for Slide In
                 confirmView.classList.remove('slide-in-right');
-                void confirmView.offsetWidth; // Trigger reflow
+                void confirmView.offsetWidth; 
                 confirmView.classList.add('slide-in-right');
 
-                // Initial State: Hide Header & Content (Loader is still Global)
                 header.classList.add('opacity-0');
                 header.classList.remove('fade-in');
                 content.classList.add('opacity-0');
                 content.classList.remove('fade-in');
 
-                // 3. After 300ms (transition mostly done), wait 200ms more?
                 setTimeout(() => {
-                    // Step A: Hide Global Loader
                     globalLoader.classList.add('hidden');
-                    
-                    // Step B: Show Header
                     header.classList.remove('opacity-0');
                     header.classList.add('fade-in');
-                    
-                    // Step C: Show Content slightly later (200ms after header)
                     setTimeout(() => {
                        content.classList.remove('opacity-0');
                        content.classList.add('fade-in');
-                       document.body.classList.remove('overflow-hidden'); // Unlock scroll
+                       unlockScroll();
                     }, 200);
-                    
-                }, 300); // Wait for slide animation (approx 300ms) to finish
+                }, 300);
 
-            }, 600); // 600ms delay on withdraw screen with loader
+            }, 600);
         }
 
         function showWithdrawViewFromConfirm() {
             document.getElementById('confirm-view').classList.add('hidden');
             document.getElementById('withdraw-view').classList.remove('hidden');
             
-            // Ensure content is visible when returning from confirm
             document.getElementById('withdraw-loader').classList.add('hidden');
             document.getElementById('withdraw-header').classList.remove('opacity-0');
             document.getElementById('withdraw-content').classList.remove('opacity-0');
             
-            // Re-enable the button if needed, though updateWithdrawState handles it
             updateWithdrawState();
-
             window.scrollTo(0, 0);
         }
 
-        // Updated showSuccessView with explicit timings and global loader
         function showSuccessView(buttonElement) {
-            document.body.classList.add('overflow-hidden'); // Lock scroll
+            lockScroll();
 
-            // 0ms: Button becomes inactive, Global Loader appears
             buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
             buttonElement.classList.add('bg-gray-200', 'text-gray-400');
             buttonElement.disabled = true;
@@ -879,13 +816,10 @@
             const globalLoader = document.getElementById('global-loader');
             globalLoader.classList.remove('hidden');
 
-            // 1000ms: Swipe Screen (Confirm -> Success)
             setTimeout(() => {
-                // Update Data on Success Screen
                 const inputValRaw = document.getElementById('withdraw-input').value.replace(/,/g, '');
                 const inputVal = parseFloat(inputValRaw) || 0;
                 document.getElementById('success-withdrawal-amount').innerText = '$' + inputVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
 
                 const confirmView = document.getElementById('confirm-view');
                 const successView = document.getElementById('success-view');
@@ -895,41 +829,32 @@
                 successView.classList.remove('hidden');
                 window.scrollTo(0, 0);
 
-                // Add slide animation
                 successView.classList.remove('slide-in-right');
                 void successView.offsetWidth; 
                 successView.classList.add('slide-in-right');
 
-                // Ensure content is hidden initially
                 successContent.classList.add('opacity-0');
                 successContent.classList.remove('fade-in');
                 
-                // 3000ms (2000ms after swipe starts): Hide Loader, Show Content
                 setTimeout(() => {
                     globalLoader.classList.add('hidden');
-                    
-                    // Fade in content
                     successContent.classList.remove('opacity-0');
                     successContent.classList.add('fade-in');
-                    document.body.classList.remove('overflow-hidden'); // Unlock scroll
+                    unlockScroll();
+                }, 2000);
 
-                }, 2000); // Wait 2000ms after the swipe starts (Total 3000ms from click)
-
-            }, 1000); // 1000ms initial loading delay
+            }, 1000);
         }
 
-        // New function to return to Earnings from Success
         function showEarningsViewFromSuccess() {
             document.getElementById('success-view').classList.add('hidden');
             document.getElementById('earnings-view').classList.remove('hidden');
             
-            // Ensure content AND header are visible immediately (no loader when going back)
             document.getElementById('earnings-loader').classList.add('hidden');
             document.getElementById('earnings-header').classList.remove('opacity-0');
             document.getElementById('earnings-content').classList.remove('opacity-0');
             
             window.scrollTo(0, 0);
-            // Optional: reset withdraw form just in case
             resetWithdrawForm();
         }
 
@@ -948,29 +873,22 @@
             const breakdown = document.getElementById('fee-breakdown');
             const btn = document.getElementById('withdraw-btn');
 
-            // 1. Fill Amount immediately
             input.value = availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             
-            // 2. Focus and place cursor at start
-            // This triggers the keyboard on mobile and places the cursor before the first digit
             input.focus();
             input.setSelectionRange(0, 0);
             
-            // 3. Immediate Visual Feedback (Input Active)
             currencySymbol.classList.remove('text-gray-400');
             currencySymbol.classList.add('text-black');
 
-            // 4. Temporary "Calculating" State
-            // Hide breakdown and keep button disabled
             breakdown.classList.add('hidden');
             btn.disabled = true;
             btn.classList.remove('bg-[#FE2C55]', 'text-white');
             btn.classList.add('bg-gray-200', 'text-gray-400');
 
-            // 5. Delay to simulate calculation
             setTimeout(() => {
                 updateWithdrawState();
-            }, 700); // 0.7s delay
+            }, 700);
         }
 
         function updateWithdrawState() {
@@ -980,36 +898,29 @@
             const estimatedEl = document.getElementById('estimated-amount');
             const currencySymbol = document.getElementById('currency-symbol');
             
-            // Remove commas before parsing the number
             let rawValue = input.value.replace(/,/g, '');
             let val = parseFloat(rawValue);
             
             if (val > 0) {
-                // Active State
                 currencySymbol.classList.remove('text-gray-400');
                 currencySymbol.classList.add('text-black');
                 
                 breakdown.classList.remove('hidden');
                 
-                // Calculate estimated amount
                 let estimated = val - serviceFee;
                 if (estimated < 0) estimated = 0;
                 
-                // Format numbers with commas
                 estimatedEl.innerText = '$' + estimated.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // Enable button
                 btn.disabled = false;
                 btn.classList.remove('bg-gray-200', 'text-gray-400');
                 btn.classList.add('bg-[#FE2C55]', 'text-white');
             } else {
-                // Inactive State
                 currencySymbol.classList.remove('text-black');
                 currencySymbol.classList.add('text-gray-400');
                 
                 breakdown.classList.add('hidden');
                 
-                // Disable button
                 btn.disabled = true;
                 btn.classList.remove('bg-[#FE2C55]', 'text-white');
                 btn.classList.add('bg-gray-200', 'text-gray-400');
