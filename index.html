@@ -119,7 +119,7 @@
 
     </style>
 </head>
-<body class="antialiased relative min-h-screen bg-white overflow-x-hidden">
+<body class="antialiased relative min-h-screen bg-white overflow-x-hidden w-full max-w-full">
 
     <!-- GLOBAL LOADER (Fixed on top of everything) -->
     <div id="global-loader" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
@@ -653,6 +653,8 @@
 
         // ANIMATION: Logic for Transition and Loading
         function showEarningsView() {
+            document.body.classList.add('overflow-hidden'); // Lock scroll
+
             const mainView = document.getElementById('main-view');
             const earningsView = document.getElementById('earnings-view');
             const header = document.getElementById('earnings-header'); // New ID
@@ -694,6 +696,7 @@
                 setTimeout(() => {
                     content.classList.remove('opacity-0');
                     content.classList.add('fade-in');
+                    document.body.classList.remove('overflow-hidden'); // Unlock scroll
                 }, 200); 
                 
             }, 800);
@@ -707,6 +710,8 @@
 
         // Updated showWithdrawView to accept button element and handle animations
         function showWithdrawView(buttonElement) {
+            document.body.classList.add('overflow-hidden'); // Lock scroll
+
             // 1. Button Feedback
             const originalText = buttonElement.innerHTML; // "Withdraw"
             // Replace text with spinner
@@ -756,6 +761,7 @@
                     setTimeout(() => {
                        content.classList.remove('opacity-0');
                        content.classList.add('fade-in');
+                       document.body.classList.remove('overflow-hidden'); // Unlock scroll
                     }, 200);
                     
                 }, 1000); // 1.0s delay for loader to spin
@@ -777,6 +783,8 @@
 
         // Updated showConfirmView to include GLOBAL loading animation
         function showConfirmView(buttonElement) {
+            document.body.classList.add('overflow-hidden'); // Lock scroll
+
             // 1. Button Feedback: Just disable and turn gray
             // Remove Active Classes
             buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
@@ -836,6 +844,7 @@
                     setTimeout(() => {
                        content.classList.remove('opacity-0');
                        content.classList.add('fade-in');
+                       document.body.classList.remove('overflow-hidden'); // Unlock scroll
                     }, 200);
                     
                 }, 300); // Wait for slide animation (approx 300ms) to finish
@@ -860,6 +869,8 @@
 
         // Updated showSuccessView with explicit timings and global loader
         function showSuccessView(buttonElement) {
+            document.body.classList.add('overflow-hidden'); // Lock scroll
+
             // 0ms: Button becomes inactive, Global Loader appears
             buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
             buttonElement.classList.add('bg-gray-200', 'text-gray-400');
@@ -900,6 +911,7 @@
                     // Fade in content
                     successContent.classList.remove('opacity-0');
                     successContent.classList.add('fade-in');
+                    document.body.classList.remove('overflow-hidden'); // Unlock scroll
 
                 }, 2000); // Wait 2000ms after the swipe starts (Total 3000ms from click)
 
