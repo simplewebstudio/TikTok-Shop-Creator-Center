@@ -25,8 +25,8 @@
             background-color: #FE2C55;
         }
         .bg-disabled-red {
-            background-color: #F8E6E9; /* Light faded pink for disabled state */
-            color: #EBA6B3; /* Faded red text */
+            background-color: #F8E6E9;
+            color: #EBA6B3;
         }
         .banner-cyan {
             color: #00F2EA;
@@ -41,7 +41,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Remove arrows from number input */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -50,12 +49,80 @@
         input::placeholder {
             color: #000000;
         }
+
+        /* --- Animations --- */
+        
+        /* Page Transition: Slide In Right */
+        .slide-in-right {
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Content Fade In */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* TikTok Dual-Ball Loader */
+        .tiktok-loader {
+            position: relative;
+            width: 40px;
+            height: 20px;
+        }
+
+        .tiktok-ball {
+            position: absolute;
+            top: 50%;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            mix-blend-mode: multiply; /* Blends colors when overlapping */
+            margin-top: -9px; /* Center vertically */
+        }
+
+        /* Cyan Ball (#00F2EA) */
+        .ball-cyan {
+            background-color: #00F2EA;
+            left: 0;
+            animation: moveCyan 0.8s infinite cubic-bezier(0.6, 0.05, 0.4, 0.95);
+            z-index: 2;
+        }
+
+        /* Red Ball (#FE2C55) */
+        .ball-red {
+            background-color: #FE2C55;
+            right: 0;
+            animation: moveRed 0.8s infinite cubic-bezier(0.6, 0.05, 0.4, 0.95);
+            z-index: 1;
+        }
+
+        /* Animation mimics orbiting/crossing */
+        @keyframes moveCyan {
+            0% { transform: translateX(0) scale(1); z-index: 2; }
+            50% { transform: translateX(20px) scale(0.6); z-index: 1; }
+            100% { transform: translateX(0) scale(1); z-index: 2; }
+        }
+
+        @keyframes moveRed {
+            0% { transform: translateX(0) scale(0.6); z-index: 1; }
+            50% { transform: translateX(-20px) scale(1); z-index: 2; }
+            100% { transform: translateX(0) scale(0.6); z-index: 1; }
+        }
+
     </style>
 </head>
-<body class="antialiased relative min-h-screen bg-white">
+<body class="antialiased relative min-h-screen bg-white overflow-x-hidden">
 
     <!-- Screen 1: Main Creator Center -->
-    <div id="main-view" class="pb-20">
+    <div id="main-view" class="pb-20 w-full bg-white">
         <div class="px-4 pt-4">
             <!-- Header -->
             <div class="mb-6">
@@ -177,9 +244,10 @@
     </div>
 
     <!-- Screen 2: Earnings Page (Hidden by default) -->
-    <div id="earnings-view" class="hidden min-h-screen bg-white flex flex-col">
-        <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20">
+    <!-- Added 'relative' class to parent for absolute positioning of loader -->
+    <div id="earnings-view" class="relative hidden min-h-screen bg-white flex flex-col w-full">
+        <!-- Header (Added ID and Initial opacity-0) -->
+        <div id="earnings-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
             <button onclick="showMainView()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -189,81 +257,93 @@
             <div class="w-6"></div> <!-- Spacer for optical centering -->
         </div>
 
-        <!-- Balance Section -->
-        <div class="flex flex-col items-center mt-6 mb-8">
-            <span class="text-slate-900 font-bold text-[13px] mb-1">Available balance</span>
-            <span class="text-4xl font-bold mb-5 text-slate-900">$18,616.31</span>
-            <!-- Withdraw Button with navigation -->
-            <button onclick="showWithdrawView()" class="bg-accent-red text-white font-medium text-[15px] py-2.5 rounded-md w-[140px] shadow-sm active:bg-red-600 transition-colors">
-                Withdraw
-            </button>
-        </div>
-
-        <!-- Menu List -->
-        <div class="px-5 flex-1">
-            <!-- Earning history -->
-            <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                <div class="flex items-center space-x-3.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-[15px] font-medium text-slate-900">Earning history</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-
-            <!-- Affiliate orders -->
-            <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                <div class="flex items-center space-x-3.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM12 9v6m3-3H9" />
-                    </svg>
-                    <span class="text-[15px] font-medium text-slate-900">Affiliate orders</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-
-            <!-- Affiliate commission rules -->
-            <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                <div class="flex items-center space-x-3.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <span class="text-[15px] font-medium text-slate-900">Affiliate commission rules</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-
-            <!-- Tax information -->
-            <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
-                <div class="flex items-center space-x-3.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <span class="text-[15px] font-medium text-slate-900">Tax information</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
+        <!-- LOADER (Changed to absolute positioning to center perfectly on screen) -->
+        <div id="earnings-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
+            <div class="tiktok-loader">
+                <div class="tiktok-ball ball-cyan"></div>
+                <div class="tiktok-ball ball-red"></div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="pb-8 text-center px-6">
-            <p class="text-[10px] text-[#9CA3AF] leading-tight">The commission payout is powered by PayPal/Hyperwallet</p>
+        <!-- CONTENT (Initially hidden opacity, fades in) -->
+        <div id="earnings-content" class="flex flex-col w-full opacity-0 transition-opacity duration-300">
+            <!-- Balance Section -->
+            <div class="flex flex-col items-center mt-6 mb-8">
+                <span class="text-slate-900 font-bold text-[13px] mb-1">Available balance</span>
+                <span class="text-4xl font-bold mb-5 text-slate-900">$18,616.31</span>
+                <!-- Withdraw Button with updated click handler -->
+                <button onclick="showWithdrawView(this)" class="bg-accent-red text-white font-medium text-[15px] py-2.5 rounded-md w-[140px] shadow-sm active:bg-red-600 transition-colors flex items-center justify-center">
+                    Withdraw
+                </button>
+            </div>
+
+            <!-- Menu List -->
+            <div class="px-5 flex-1">
+                <!-- Earning history -->
+                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                    <div class="flex items-center space-x-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-[15px] font-medium text-slate-900">Earning history</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+
+                <!-- Affiliate orders -->
+                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                    <div class="flex items-center space-x-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM12 9v6m3-3H9" />
+                        </svg>
+                        <span class="text-[15px] font-medium text-slate-900">Affiliate orders</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+
+                <!-- Affiliate commission rules -->
+                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                    <div class="flex items-center space-x-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        <span class="text-[15px] font-medium text-slate-900">Affiliate commission rules</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+
+                <!-- Tax information -->
+                <div class="flex items-center justify-between py-3.5 cursor-pointer active:bg-gray-50 rounded-lg -mx-2 px-2">
+                    <div class="flex items-center space-x-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        <span class="text-[15px] font-medium text-slate-900">Tax information</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pb-8 text-center px-6">
+                <p class="text-[10px] text-[#9CA3AF] leading-tight">The commission payout is powered by PayPal/Hyperwallet</p>
+            </div>
         </div>
     </div>
 
     <!-- Screen 3: Withdraw Money Page (Hidden by default) -->
-    <div id="withdraw-view" class="hidden min-h-screen bg-white flex flex-col">
+    <!-- Updated with relative position, header/content IDs and loader -->
+    <div id="withdraw-view" class="relative hidden min-h-screen bg-white flex flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20">
+        <div id="withdraw-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
             <button onclick="showEarningsViewFromWithdraw()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -277,8 +357,16 @@
             </button>
         </div>
 
+        <!-- LOADER (Absolute centered) -->
+        <div id="withdraw-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
+            <div class="tiktok-loader">
+                <div class="tiktok-ball ball-cyan"></div>
+                <div class="tiktok-ball ball-red"></div>
+            </div>
+        </div>
+
         <!-- Scrollable Content -->
-        <div class="flex-1 px-4 pt-2">
+        <div id="withdraw-content" class="flex-1 px-4 pt-2 opacity-0 transition-opacity duration-300">
             
             <!-- Withdrawal Account Section -->
             <div class="mb-8">
@@ -341,7 +429,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                             </svg>
                         </div>
-                        <span class="text-black font-bold text-[13px]">$ 0.05</span>
+                        <span class="text-black font-bold text-[13px]">$0.05</span>
                     </div>
                 </div>
             </div>
@@ -469,10 +557,52 @@
         const availableBalance = 18616.31;
         const serviceFee = 0.05;
 
+        // ANIMATION: Logic for Transition and Loading
         function showEarningsView() {
-            document.getElementById('main-view').classList.add('hidden');
-            document.getElementById('earnings-view').classList.remove('hidden');
+            const mainView = document.getElementById('main-view');
+            const earningsView = document.getElementById('earnings-view');
+            const header = document.getElementById('earnings-header'); // New ID
+            const loader = document.getElementById('earnings-loader');
+            const content = document.getElementById('earnings-content');
+
+            // 1. Hide main view, show Earnings view
+            mainView.classList.add('hidden');
+            earningsView.classList.remove('hidden');
             window.scrollTo(0, 0);
+
+            // 2. Add slide-in animation
+            earningsView.classList.remove('slide-in-right');
+            void earningsView.offsetWidth; // Trigger reflow
+            earningsView.classList.add('slide-in-right');
+
+            // 3. Initial State for Animation
+            // Hide Header and Content, Show Loader
+            header.classList.add('opacity-0');
+            header.classList.remove('fade-in');
+            
+            content.classList.add('opacity-0');
+            content.classList.remove('fade-in');
+            
+            loader.classList.remove('hidden');
+
+            // 4. Sequence
+            // Total load time: 800ms
+            
+            setTimeout(() => {
+                // Step A: Hide Loader
+                loader.classList.add('hidden');
+                
+                // Step B: Show Header
+                header.classList.remove('opacity-0');
+                header.classList.add('fade-in');
+                
+                // Step C: Show Content slightly later (e.g. +200ms)
+                setTimeout(() => {
+                    content.classList.remove('opacity-0');
+                    content.classList.add('fade-in');
+                }, 200); 
+                
+            }, 800);
         }
 
         function showMainView() {
@@ -481,16 +611,73 @@
             window.scrollTo(0, 0);
         }
 
-        function showWithdrawView() {
-            document.getElementById('earnings-view').classList.add('hidden');
-            document.getElementById('withdraw-view').classList.remove('hidden');
-            window.scrollTo(0, 0);
-            resetWithdrawForm();
+        // Updated showWithdrawView to accept button element and handle animations
+        function showWithdrawView(buttonElement) {
+            // 1. Button Feedback
+            const originalText = buttonElement.innerHTML; // "Withdraw"
+            // Replace text with spinner
+            buttonElement.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            buttonElement.disabled = true;
+
+            setTimeout(() => {
+                // Restore button
+                buttonElement.innerHTML = originalText;
+                buttonElement.disabled = false;
+
+                // 2. Perform Transition (similar to showEarningsView)
+                const earningsView = document.getElementById('earnings-view');
+                const withdrawView = document.getElementById('withdraw-view');
+                const header = document.getElementById('withdraw-header');
+                const loader = document.getElementById('withdraw-loader');
+                const content = document.getElementById('withdraw-content');
+
+                earningsView.classList.add('hidden');
+                withdrawView.classList.remove('hidden');
+                window.scrollTo(0, 0);
+
+                // Animation classes for Slide In
+                withdrawView.classList.remove('slide-in-right');
+                void withdrawView.offsetWidth; // Trigger reflow
+                withdrawView.classList.add('slide-in-right');
+
+                // Initial State: Show Loader, Hide Header & Content
+                header.classList.add('opacity-0');
+                header.classList.remove('fade-in');
+                content.classList.add('opacity-0');
+                content.classList.remove('fade-in');
+                loader.classList.remove('hidden');
+
+                resetWithdrawForm();
+
+                // Sequence
+                setTimeout(() => {
+                    // Step A: Hide Loader
+                    loader.classList.add('hidden');
+                    
+                    // Step B: Show Header
+                    header.classList.remove('opacity-0');
+                    header.classList.add('fade-in');
+                    
+                    // Step C: Show Content slightly later
+                    setTimeout(() => {
+                       content.classList.remove('opacity-0');
+                       content.classList.add('fade-in');
+                    }, 200);
+                    
+                }, 1000); // 1.0s delay for loader to spin
+
+            }, 500); // 500ms delay for button feedback
         }
 
         function showEarningsViewFromWithdraw() {
             document.getElementById('withdraw-view').classList.add('hidden');
             document.getElementById('earnings-view').classList.remove('hidden');
+            
+            // Ensure content AND header are visible if returning directly
+            document.getElementById('earnings-loader').classList.add('hidden');
+            document.getElementById('earnings-header').classList.remove('opacity-0');
+            document.getElementById('earnings-content').classList.remove('opacity-0');
+            
             window.scrollTo(0, 0);
         }
 
@@ -503,6 +690,12 @@
         function showWithdrawViewFromConfirm() {
             document.getElementById('confirm-view').classList.add('hidden');
             document.getElementById('withdraw-view').classList.remove('hidden');
+            
+            // Ensure content is visible when returning from confirm
+            document.getElementById('withdraw-loader').classList.add('hidden');
+            document.getElementById('withdraw-header').classList.remove('opacity-0');
+            document.getElementById('withdraw-content').classList.remove('opacity-0');
+            
             window.scrollTo(0, 0);
         }
 
@@ -517,6 +710,12 @@
         function showEarningsViewFromSuccess() {
             document.getElementById('success-view').classList.add('hidden');
             document.getElementById('earnings-view').classList.remove('hidden');
+            
+            // Ensure content AND header are visible immediately (no loader when going back)
+            document.getElementById('earnings-loader').classList.add('hidden');
+            document.getElementById('earnings-header').classList.remove('opacity-0');
+            document.getElementById('earnings-content').classList.remove('opacity-0');
+            
             window.scrollTo(0, 0);
             // Optional: reset withdraw form just in case
             resetWithdrawForm();
