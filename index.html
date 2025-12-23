@@ -121,6 +121,14 @@
 </head>
 <body class="antialiased relative min-h-screen bg-white overflow-x-hidden">
 
+    <!-- GLOBAL LOADER (Fixed on top of everything) -->
+    <div id="global-loader" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
+        <div class="tiktok-loader">
+            <div class="tiktok-ball ball-cyan"></div>
+            <div class="tiktok-ball ball-red"></div>
+        </div>
+    </div>
+
     <!-- Screen 1: Main Creator Center -->
     <div id="main-view" class="pb-20 w-full bg-white">
         <div class="px-4 pt-4">
@@ -161,15 +169,18 @@
                 <div class="flex justify-between">
                     <div class="flex flex-col">
                         <span class="text-secondary text-sm">Sales</span>
-                        <span class="font-black text-2xl mt-1">$0</span>
+                        <!-- Added ID for dynamic update -->
+                        <span id="dashboard-sales" class="font-black text-2xl mt-1">$0.00</span>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-secondary text-sm">Items sold</span>
-                        <span class="font-black text-2xl mt-1">0</span>
+                        <!-- Added ID for dynamic update -->
+                        <span id="dashboard-items" class="font-black text-2xl mt-1">0</span>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-secondary text-sm">Orders</span>
-                        <span class="font-black text-2xl mt-1">0</span>
+                        <!-- Added ID for dynamic update -->
+                        <span id="dashboard-orders" class="font-black text-2xl mt-1">0</span>
                     </div>
                 </div>
             </div>
@@ -177,8 +188,17 @@
             <!-- What's big this month -->
             <div class="mb-8">
                 <h2 class="text-lg font-black mb-4">What's big this month</h2>
-                <div class="relative w-full rounded-xl overflow-hidden shadow-sm">
-                    <img src="https://i.ibb.co/MDK0W1pt/2025-12-22-164034.png" alt="Holiday Deals Banner" class="w-full object-cover">
+                <!-- Banner Container -->
+                <div class="relative w-full rounded-xl overflow-hidden shadow-sm mb-3">
+                    <img src="https://i.ibb.co/7Nj77tsk/Tik-Tok-af0340f22d.png" alt="TikTok Banner" class="w-full object-cover">
+                </div>
+                <!-- Pagination Dots -->
+                <div class="flex justify-center space-x-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-black"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                 </div>
             </div>
 
@@ -270,7 +290,8 @@
             <!-- Balance Section -->
             <div class="flex flex-col items-center mt-6 mb-8">
                 <span class="text-slate-900 font-bold text-[13px] mb-1">Available balance</span>
-                <span class="text-4xl font-bold mb-5 text-slate-900">$18,616.31</span>
+                <!-- Added ID for dynamic update -->
+                <span id="earnings-balance-display" class="text-4xl font-bold mb-5 text-slate-900">$0.00</span>
                 <!-- Withdraw Button with updated click handler -->
                 <button onclick="showWithdrawView(this)" class="bg-accent-red text-white font-medium text-[15px] py-2.5 rounded-md w-[140px] shadow-sm active:bg-red-600 transition-colors flex items-center justify-center">
                     Withdraw
@@ -412,7 +433,8 @@
                     <input id="withdraw-input" type="text" inputmode="decimal" placeholder="0.00" class="text-4xl font-normal w-full outline-none border-none placeholder-gray-400 p-0 m-0 text-slate-900" oninput="updateWithdrawState()" />
                 </div>
                 <div class="flex justify-between items-center mb-4">
-                    <p class="text-[#9CA3AF] text-[12px]">Available balance: $18,616.31</p>
+                    <!-- Added ID for dynamic update -->
+                    <p id="withdraw-balance-text" class="text-[#9CA3AF] text-[12px]">Available balance: $0.00</p>
                     <button onclick="fillWithdrawAll()" class="text-accent-red font-bold text-[14px]">Withdraw all</button>
                 </div>
                 
@@ -435,16 +457,17 @@
             </div>
 
             <!-- Main Withdraw Button (Changed to Gray) -->
-             <button id="withdraw-btn" onclick="showConfirmView()" class="w-full bg-gray-200 text-gray-400 font-bold py-3 rounded text-[16px] transition-colors duration-200" disabled>
+             <button id="withdraw-btn" onclick="showConfirmView(this)" class="w-full bg-gray-200 text-gray-400 font-bold py-3 rounded text-[16px] transition-colors duration-200" disabled>
                 Withdraw now
             </button>
         </div>
     </div>
 
     <!-- Screen 4: Confirm Withdrawal Page (Hidden by default) -->
-    <div id="confirm-view" class="hidden min-h-screen bg-white flex flex-col">
+    <!-- Added 'relative' for loader positioning -->
+    <div id="confirm-view" class="relative hidden min-h-screen bg-white flex flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20">
+        <div id="confirm-header" class="flex items-center justify-between px-4 py-3 sticky top-0 bg-white z-20 opacity-0 transition-opacity duration-300">
             <button onclick="showWithdrawViewFromConfirm()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -454,8 +477,8 @@
             <div class="w-6"></div> <!-- Spacer for optical centering -->
         </div>
 
-        <!-- Content -->
-        <div class="px-4 pt-4 pb-10">
+        <!-- Content (Wrapped in ID for fade-in) -->
+        <div id="confirm-content" class="px-4 pt-4 pb-10 opacity-0 transition-opacity duration-300">
             <!-- Transaction Details List -->
             <div class="flex flex-col gap-6">
                 <!-- Item 1: Transfer to -->
@@ -469,7 +492,8 @@
                 <div>
                     <!-- Reverted label color to gray -->
                     <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
-                    <p class="text-[17px] text-gray-900 font-bold">$18,616.31</p>
+                    <!-- Added ID for dynamic update -->
+                    <p id="confirm-withdrawal-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
                 </div>
 
                 <!-- Item 3: Service fee -->
@@ -483,7 +507,8 @@
                 <div>
                     <!-- Reverted label color to gray -->
                     <p class="text-sm text-gray-500 mb-1">Receiving amount</p>
-                    <p class="text-[17px] text-gray-900 font-bold">$18,616.26</p>
+                    <!-- Added ID for dynamic update -->
+                    <p id="confirm-receiving-amount" class="text-[17px] text-gray-900 font-bold">$0.00</p>
                 </div>
             </div>
 
@@ -493,16 +518,17 @@
             </p>
 
             <!-- Footer Action Button (Updated to trigger Success View) -->
-            <button onclick="showSuccessView()" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors">
+            <button onclick="showSuccessView(this)" class="w-full bg-[#FE2C55] text-white font-bold py-3 rounded-lg text-[16px] shadow-sm active:bg-red-600 transition-colors">
                 Confirm to withdraw
             </button>
         </div>
     </div>
 
     <!-- Screen 5: Success View (Hidden by default) -->
-    <div id="success-view" class="hidden min-h-screen bg-white flex flex-col">
-        <!-- Content -->
-        <div class="flex-1 flex flex-col px-4 pt-16">
+    <!-- Added 'relative' class -->
+    <div id="success-view" class="relative hidden min-h-screen bg-white flex flex-col">
+        <!-- Content Wrapped in ID for fade-in animation -->
+        <div id="success-content" class="flex-1 flex flex-col px-4 pt-16 opacity-0 transition-opacity duration-300">
             
             <!-- Hero Section -->
             <div class="flex flex-col items-center mb-10">
@@ -521,7 +547,8 @@
                 <!-- Amount -->
                 <div>
                     <p class="text-sm text-gray-500 mb-1">Withdrawal amount</p>
-                    <p class="text-[17px] font-bold text-slate-900">$18,616.31</p>
+                    <!-- Added ID for dynamic update -->
+                    <p id="success-withdrawal-amount" class="text-[17px] font-bold text-slate-900">$0.00</p>
                 </div>
                 
                 <!-- Fee -->
@@ -554,8 +581,75 @@
     </div>
 
     <script>
-        const availableBalance = 18616.31;
+        // Init global variables (removed fixed value)
+        let availableBalance = 0;
         const serviceFee = 0.05;
+
+        // Generator Function
+        function generateRandomBalance() {
+            // Range 1500 - 6000
+            const min = 1500;
+            const max = 6000;
+            const random = Math.random() * (max - min) + min;
+            return parseFloat(random.toFixed(2));
+        }
+
+        // Init App Function - runs on load
+        function initApp() {
+            // 1. Generate Main Balance
+            availableBalance = generateRandomBalance();
+            
+            // 2. Update Earnings Screen Display
+            const earningsBalanceEl = document.getElementById('earnings-balance-display');
+            if (earningsBalanceEl) {
+                 earningsBalanceEl.innerText = '$' + availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            }
+
+            // 3. Update Withdraw Screen Small Text
+            const withdrawBalanceTextEl = document.getElementById('withdraw-balance-text');
+            if (withdrawBalanceTextEl) {
+                withdrawBalanceTextEl.innerText = 'Available balance: $' + availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            }
+
+            // 4. Generate & Update Dashboard Data (Sales, Items, Orders)
+            updateDashboardData(availableBalance);
+        }
+
+        function updateDashboardData(balance) {
+            // Algorithm:
+            // Sales = ~8% of total balance
+            const salesRaw = balance * 0.08;
+            const salesValue = parseFloat(salesRaw.toFixed(2));
+
+            // Items sold = Sales / ~15.5 (based on user logic: 300/19 ~= 15.7)
+            // Round to nearest integer
+            let itemsValue = Math.round(salesValue / 15.5);
+            if (itemsValue < 0) itemsValue = 0;
+
+            // Orders = Items - (1 or 2)
+            // Ensure orders is not less than 0 and not more than items
+            const subtract = Math.floor(Math.random() * 2) + 1; // 1 or 2
+            let ordersValue = itemsValue - subtract;
+            
+            // Safety checks
+            if (ordersValue < 0) ordersValue = 0;
+            if (itemsValue === 0) ordersValue = 0; 
+            // If we have items but orders became 0 or negative due to subtraction logic (rare on high numbers but possible on low), fix it.
+            // Actually, if items > 0, orders should be at least 1 usually.
+            if (itemsValue > 0 && ordersValue <= 0) ordersValue = 1;
+
+            // Update DOM
+            const salesEl = document.getElementById('dashboard-sales');
+            const itemsEl = document.getElementById('dashboard-items');
+            const ordersEl = document.getElementById('dashboard-orders');
+
+            if (salesEl) salesEl.innerText = '$' + salesValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            if (itemsEl) itemsEl.innerText = itemsValue;
+            if (ordersEl) ordersEl.innerText = ordersValue;
+        }
+
+        // Run initialization
+        window.onload = initApp;
 
         // ANIMATION: Logic for Transition and Loading
         function showEarningsView() {
@@ -681,10 +775,72 @@
             window.scrollTo(0, 0);
         }
 
-        function showConfirmView() {
-            document.getElementById('withdraw-view').classList.add('hidden');
-            document.getElementById('confirm-view').classList.remove('hidden');
-            window.scrollTo(0, 0);
+        // Updated showConfirmView to include GLOBAL loading animation
+        function showConfirmView(buttonElement) {
+            // 1. Button Feedback: Just disable and turn gray
+            // Remove Active Classes
+            buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
+            // Add Inactive Classes
+            buttonElement.classList.add('bg-gray-200', 'text-gray-400');
+            buttonElement.disabled = true;
+
+            // Show Global Loader (immediately)
+            const globalLoader = document.getElementById('global-loader');
+            globalLoader.classList.remove('hidden');
+
+            // 2. Delay 600ms before swiping
+            setTimeout(() => {
+                // Restore button visual state (in case user goes back later)
+                // buttonElement.disabled = false; (We do this on return)
+
+                // Update Data on Confirm Screen based on actual input
+                const inputValRaw = document.getElementById('withdraw-input').value.replace(/,/g, '');
+                const inputVal = parseFloat(inputValRaw) || 0;
+                const receivingVal = Math.max(0, inputVal - serviceFee);
+                
+                document.getElementById('confirm-withdrawal-amount').innerText = '$' + inputVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('confirm-receiving-amount').innerText = '$' + receivingVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+
+                // Perform Transition
+                const withdrawView = document.getElementById('withdraw-view');
+                const confirmView = document.getElementById('confirm-view');
+                const header = document.getElementById('confirm-header');
+                const content = document.getElementById('confirm-content');
+
+                withdrawView.classList.add('hidden');
+                confirmView.classList.remove('hidden');
+                window.scrollTo(0, 0);
+
+                // Animation classes for Slide In
+                confirmView.classList.remove('slide-in-right');
+                void confirmView.offsetWidth; // Trigger reflow
+                confirmView.classList.add('slide-in-right');
+
+                // Initial State: Hide Header & Content (Loader is still Global)
+                header.classList.add('opacity-0');
+                header.classList.remove('fade-in');
+                content.classList.add('opacity-0');
+                content.classList.remove('fade-in');
+
+                // 3. After 300ms (transition mostly done), wait 200ms more?
+                setTimeout(() => {
+                    // Step A: Hide Global Loader
+                    globalLoader.classList.add('hidden');
+                    
+                    // Step B: Show Header
+                    header.classList.remove('opacity-0');
+                    header.classList.add('fade-in');
+                    
+                    // Step C: Show Content slightly later (200ms after header)
+                    setTimeout(() => {
+                       content.classList.remove('opacity-0');
+                       content.classList.add('fade-in');
+                    }, 200);
+                    
+                }, 300); // Wait for slide animation (approx 300ms) to finish
+
+            }, 600); // 600ms delay on withdraw screen with loader
         }
 
         function showWithdrawViewFromConfirm() {
@@ -696,14 +852,58 @@
             document.getElementById('withdraw-header').classList.remove('opacity-0');
             document.getElementById('withdraw-content').classList.remove('opacity-0');
             
+            // Re-enable the button if needed, though updateWithdrawState handles it
+            updateWithdrawState();
+
             window.scrollTo(0, 0);
         }
 
-        // New function for Success View
-        function showSuccessView() {
-            document.getElementById('confirm-view').classList.add('hidden');
-            document.getElementById('success-view').classList.remove('hidden');
-            window.scrollTo(0, 0);
+        // Updated showSuccessView with explicit timings and global loader
+        function showSuccessView(buttonElement) {
+            // 0ms: Button becomes inactive, Global Loader appears
+            buttonElement.classList.remove('bg-[#FE2C55]', 'text-white');
+            buttonElement.classList.add('bg-gray-200', 'text-gray-400');
+            buttonElement.disabled = true;
+
+            const globalLoader = document.getElementById('global-loader');
+            globalLoader.classList.remove('hidden');
+
+            // 1000ms: Swipe Screen (Confirm -> Success)
+            setTimeout(() => {
+                // Update Data on Success Screen
+                const inputValRaw = document.getElementById('withdraw-input').value.replace(/,/g, '');
+                const inputVal = parseFloat(inputValRaw) || 0;
+                document.getElementById('success-withdrawal-amount').innerText = '$' + inputVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+
+                const confirmView = document.getElementById('confirm-view');
+                const successView = document.getElementById('success-view');
+                const successContent = document.getElementById('success-content');
+
+                confirmView.classList.add('hidden');
+                successView.classList.remove('hidden');
+                window.scrollTo(0, 0);
+
+                // Add slide animation
+                successView.classList.remove('slide-in-right');
+                void successView.offsetWidth; 
+                successView.classList.add('slide-in-right');
+
+                // Ensure content is hidden initially
+                successContent.classList.add('opacity-0');
+                successContent.classList.remove('fade-in');
+                
+                // 3000ms (2000ms after swipe starts): Hide Loader, Show Content
+                setTimeout(() => {
+                    globalLoader.classList.add('hidden');
+                    
+                    // Fade in content
+                    successContent.classList.remove('opacity-0');
+                    successContent.classList.add('fade-in');
+
+                }, 2000); // Wait 2000ms after the swipe starts (Total 3000ms from click)
+
+            }, 1000); // 1000ms initial loading delay
         }
 
         // New function to return to Earnings from Success
@@ -732,9 +932,33 @@
 
         function fillWithdrawAll() {
             const input = document.getElementById('withdraw-input');
-            // Format number with commas: 18,616.31
+            const currencySymbol = document.getElementById('currency-symbol');
+            const breakdown = document.getElementById('fee-breakdown');
+            const btn = document.getElementById('withdraw-btn');
+
+            // 1. Fill Amount immediately
             input.value = availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            updateWithdrawState();
+            
+            // 2. Focus and place cursor at start
+            // This triggers the keyboard on mobile and places the cursor before the first digit
+            input.focus();
+            input.setSelectionRange(0, 0);
+            
+            // 3. Immediate Visual Feedback (Input Active)
+            currencySymbol.classList.remove('text-gray-400');
+            currencySymbol.classList.add('text-black');
+
+            // 4. Temporary "Calculating" State
+            // Hide breakdown and keep button disabled
+            breakdown.classList.add('hidden');
+            btn.disabled = true;
+            btn.classList.remove('bg-[#FE2C55]', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-400');
+
+            // 5. Delay to simulate calculation
+            setTimeout(() => {
+                updateWithdrawState();
+            }, 700); // 0.7s delay
         }
 
         function updateWithdrawState() {
